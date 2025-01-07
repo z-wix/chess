@@ -1,0 +1,58 @@
+---
+title: "chess"
+author: "Zack Wixom"
+date: "2025-01-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(bigchess)
+```
+
+## R Markdown
+
+
+```{r cars}
+
+
+# Define file paths
+pgn_file <- "path/to/your/file.pgn" # Replace with your file path
+output_csv <- "chess_games_summary.csv"
+
+# Read PGN file
+games <- read.pgn(pgn_file)
+
+# Extract relevant data
+summary_data <- data.frame(
+  Game_Number = 1:nrow(games),                     # Game index
+  Result = games$result,                          # Game result (1-0, 0-1, 1/2-1/2)
+  Opening = games$opening,                        # Opening name
+  ECO = games$eco,                                # ECO code
+  Your_Elo = ifelse(games$white == "User",        # User's Elo
+                    games$white_elo, 
+                    games$black_elo),
+  Opponent_Elo = ifelse(games$white == "User",    # Opponent's Elo
+                        games$black_elo, 
+                        games$white_elo),
+  Color = ifelse(games$white == "User", "White", "Black"), # Color played by the user
+  Moves = games$san                               # Moves in standard algebraic notation
+)
+
+# Write the summary to a CSV file
+write.csv(summary_data, output_csv, row.names = FALSE)
+
+cat(paste("PGN file has been reformatted and saved to", output_csv))
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
